@@ -4,29 +4,32 @@ import { Container } from "@mui/material";
 import { url } from "inspector";
 import { sendRequest } from "@/utils/api";
 export default async function HomePage() {
-  // const res = await fetch("http://localhost:8000/api/v1/tracks/top", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json", // Xác định dữ liệu gửi đi là JSON
-  //   },
-  //   body: JSON.stringify({
-  //     category: "CHILL",
-  //     limit: 20,
-  //   }),
-  // });
-  // console.log("check res server", await res.json());
-  const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+  const chills = await sendRequest<IBackendRes<ITrackTop[]>>({
     url: "http://localhost:8000/api/v1/tracks/top",
     method: "POST",
-    body: { category: "CHILL", limit: 2 },
+    body: { category: "CHILL", limit: 10 },
   });
-  console.log("check res:", res.data);
+  const workouts = await sendRequest<IBackendRes<ITrackTop[]>>({
+    url: "http://localhost:8000/api/v1/tracks/top",
+    method: "POST",
+    body: { category: "WORKOUT", limit: 10 },
+  });
+  const party = await sendRequest<IBackendRes<ITrackTop[]>>({
+    url: "http://localhost:8000/api/v1/tracks/top",
+    method: "POST",
+    body: { category: "PARTY", limit: 10 },
+  });
+  // console.log("check res:", res.data);
   return (
     <div>
       <Container>
         {" "}
-        <MainSlider />
-        <MainSlider />
+        <MainSlider
+          title="TOP CHILL"
+          data={chills?.data ?? []} // nếu  chills?.data undefind thì trả ra mảng rỗng
+        />
+        <MainSlider title="TOP WORKOUT" data={workouts?.data ?? []} />
+        <MainSlider title="TOP PARTY" data={party?.data ?? []} />
       </Container>
     </div>
   );
