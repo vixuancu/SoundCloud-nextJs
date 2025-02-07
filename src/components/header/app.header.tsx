@@ -111,7 +111,14 @@ export default function AppHeader() {
       <MenuItem sx={{ a: { color: "unset", textDecoration: "none" } }}>
         <Link href={"/profile"}>Profile</Link>{" "}
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose;
+          signOut();
+        }}
+      >
+        Logout
+      </MenuItem>
     </Menu>
   );
 
@@ -213,7 +220,9 @@ export default function AppHeader() {
                   <Avatar onClick={handleProfileMenuOpen}>C</Avatar>
                 </>
               ) : (
-                <Link href="/api/auth/signin">Login</Link>
+                <Link href="#" onClick={() => signIn()}>
+                  Login
+                </Link>
               )}
             </Box>
             <Box sx={{ display: { xs: "flex", md: "none" } }}>
