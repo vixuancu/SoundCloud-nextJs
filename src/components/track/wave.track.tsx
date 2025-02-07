@@ -23,6 +23,7 @@ import WaveSurfer from "wavesurfer.js";
 import "./wave.scss";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
+import { Tooltip } from "@mui/material";
 interface WaveSurferPlayerProps {
   url: string;
 }
@@ -115,6 +116,34 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
     return `${minutes}:${paddedSeconds}`;
   };
 
+  const arrComments = [
+    {
+      id: 1,
+      avatar: "http://localhost:8000/images/chill1.png",
+      moment: 10,
+      user: "username 1",
+      content: "just a comment1",
+    },
+    {
+      id: 2,
+      avatar: "http://localhost:8000/images/chill1.png",
+      moment: 30,
+      user: "username 2",
+      content: "just a comment3",
+    },
+    {
+      id: 3,
+      avatar: "http://localhost:8000/images/chill1.png",
+      moment: 50,
+      user: "username 3",
+      content: "just a comment3",
+    },
+  ];
+  const calLeft = (moment: number) => {
+    const hardCodeDuration = 199;
+    const percent = (moment / hardCodeDuration) * 100;
+    return `${percent}%`;
+  };
   return (
     <div style={{ marginTop: 20 }}>
       <div
@@ -218,6 +247,30 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
                 backdropFilter: "brightness(0.5)",
               }}
             ></div>
+            <div className="comments" style={{ position: "relative" }}>
+              {arrComments.map((item) => {
+                return (
+                  <Tooltip title={item.content} arrow>
+                    <img
+                      onPointerMove={(e) => {
+                        const hover = hoverRef.current!;
+                        hover.style.width = calLeft(item.moment);
+                      }}
+                      key={item.id}
+                      style={{
+                        height: 20,
+                        width: 20,
+                        position: "absolute",
+                        top: 71,
+                        zIndex: 20,
+                        left: calLeft(item.moment),
+                      }}
+                      src={`http://localhost:8000/images/chill1.png`}
+                    />
+                  </Tooltip>
+                );
+              })}
+            </div>
           </div>
         </div>
         {/*  */}
