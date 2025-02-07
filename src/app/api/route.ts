@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-
+// fix lỗi Cors làm ở next server
 export async function GET(req: NextRequest) {
   // Lấy tất cả query params
   const query = Object.fromEntries(req.nextUrl.searchParams);

@@ -250,11 +250,11 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
             <div className="comments" style={{ position: "relative" }}>
               {arrComments.map((item) => {
                 return (
-                  <Tooltip title={item.content} arrow>
+                  <Tooltip title={item.content} arrow key={`key-${item.id}`}>
                     <img
                       onPointerMove={(e) => {
                         const hover = hoverRef.current!;
-                        hover.style.width = calLeft(item.moment);
+                        hover.style.width = calLeft(item.moment + 3);
                       }}
                       key={item.id}
                       style={{
