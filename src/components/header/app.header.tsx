@@ -220,7 +220,10 @@ export default function AppHeader() {
                   <Avatar onClick={handleProfileMenuOpen}>C</Avatar>
                 </>
               ) : (
-                <Link href="#" onClick={() => signIn()}>
+                <Link
+                  href="/auth/signin"
+                  // onClick={() => signIn()}
+                >
                   Login
                 </Link>
               )}

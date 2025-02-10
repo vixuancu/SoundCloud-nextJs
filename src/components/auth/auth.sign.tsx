@@ -16,6 +16,7 @@ import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
+import { getProviders, signIn } from "next-auth/react";
 const AuthSignIn = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>("");
@@ -153,6 +154,9 @@ const AuthSignIn = () => {
                   sx={{
                     cursor: "pointer",
                     bgcolor: "orange",
+                  }}
+                  onClick={() => {
+                    signIn("github");
                   }}
                 >
                   <GitHubIcon titleAccess="Login with Github" />
