@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
         } else {
           // Return null if user data could not be retrieved
           // return null;
-          throw new Error(res?.message as string);
+          throw new Error(res?.message as string); // trả về nội dung lỗi
         }
       },
     }),

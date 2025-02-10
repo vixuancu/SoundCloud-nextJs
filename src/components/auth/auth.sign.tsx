@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -33,6 +35,9 @@ const AuthSignIn = () => {
   const [errorPassword, setErrorPassword] = useState<string>("");
 
   const router = useRouter();
+
+  const [openMessage, setOpenMessage] = useState<boolean>(false);
+  const [resMessage, setResMessage] = useState<string>("");
   const handleSubmit = async () => {
     setIsErrorUserName(false);
     setIsErrorPassword(false);
@@ -59,7 +64,8 @@ const AuthSignIn = () => {
       // redirect("/");// sử dụng ở client bị lỗi search next Link dùng useRouter Hook
       router.push("/");
     } else {
-      alert(res?.error);
+      setOpenMessage(true);
+      setResMessage(res.error);
     }
   };
   return (
@@ -124,6 +130,11 @@ const AuthSignIn = () => {
               />
               <TextField
                 onChange={(event) => setPassword(event.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmit();
+                  }
+                }}
                 variant="outlined"
                 margin="normal"
                 required
@@ -193,6 +204,16 @@ const AuthSignIn = () => {
             </div>
           </Grid>
         </Grid>
+        <Snackbar
+          open={openMessage}
+          autoHideDuration={3000}
+          onClose={() => setOpenMessage(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert onClose={() => setOpenMessage(false)} severity="error">
+            {resMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     </>
   );
