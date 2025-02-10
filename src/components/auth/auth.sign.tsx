@@ -17,9 +17,13 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
 import { getProviders, signIn } from "next-auth/react";
+import Link from "next/link";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useRouter } from "next/navigation";
+
 const AuthSignIn = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string>("");
+  const [username, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const [isErrorUserName, setIsErrorUserName] = useState<boolean>(false);
@@ -28,12 +32,13 @@ const AuthSignIn = () => {
   const [errorUserName, setErrorUserName] = useState<string>("");
   const [errorPassword, setErrorPassword] = useState<string>("");
 
-  const handleSubmit = () => {
+  const router = useRouter();
+  const handleSubmit = async () => {
     setIsErrorUserName(false);
     setIsErrorPassword(false);
     setErrorUserName("");
     setErrorPassword("");
-    if (!userName) {
+    if (!username) {
       setIsErrorUserName(true);
       setErrorUserName("Username đang trống");
       return;
@@ -43,7 +48,19 @@ const AuthSignIn = () => {
       setErrorPassword("Password đang trống");
       return;
     }
-    console.log(">>> check username: ", userName, " pass: ", password);
+    console.log(">>> check username: ", username, " pass: ", password);
+    const res = await signIn("credentials", {
+      username: username,
+      password: password,
+      redirect: false,
+    });
+    console.log("check res:", res);
+    if (!res?.error) {
+      // redirect("/");// sử dụng ở client bị lỗi search next Link dùng useRouter Hook
+      router.push("/");
+    } else {
+      alert(res?.error);
+    }
   };
   return (
     <>
@@ -76,6 +93,9 @@ const AuthSignIn = () => {
             }}
           >
             <div style={{ margin: "20px" }}>
+              <Link href={"/"}>
+                <ArrowBackIcon />
+              </Link>
               <Box
                 sx={{
                   display: "flex",

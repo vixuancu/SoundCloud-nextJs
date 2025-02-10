@@ -3,6 +3,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { error } from "console";
 export const authOptions: AuthOptions = {
   secret: process.env.NO_SECRET,
   // Configure one or more authentication providers
@@ -42,7 +43,8 @@ export const authOptions: AuthOptions = {
           return res.data as any; // dữ liệu ở đây là user
         } else {
           // Return null if user data could not be retrieved
-          return null;
+          // return null;
+          throw new Error(res?.message as string);
         }
       },
     }),
