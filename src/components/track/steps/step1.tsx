@@ -5,7 +5,8 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useCallback } from "react";
-
+import { sendRequest, sendRequestFile } from "@/utils/api";
+import { useSession } from "next-auth/react"; // lấy session ở client
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -33,12 +34,40 @@ function InputFileUpload() {
   );
 }
 const Step1 = () => {
-  const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
-    // Do something with the files
-    console.log("check acceptedFiles:", acceptedFiles);
-  }, []);
+  const { data: session } = useSession();
+  // console.log("check session:", session);
+
+  //useMemo => variable
+  //useCallback=> function khi hàm render nhiều lần mà giá trị không thay đổi thì hàm này giúp render 1 lần
+  const onDrop = useCallback(
+    async (acceptedFiles: FileWithPath[]) => {
+      // Do something with the files
+      if (acceptedFiles && acceptedFiles[0]) {
+        const audio = acceptedFiles[0]; //lấy ra file ,acceptedFiles trả về 1 mảng
+        const formData = new FormData();
+        formData.append("fileUpload", audio); // key ở backend sẽ dùng vì thế cần check api ,key là fileUpload
+        console.log("check file:", audio);
+
+        const res = await sendRequestFile<IBackendRes<ITrackTop[]>>({
+          url: "http://localhost:8000/api/v1/files/upload",
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            target_type: "tracks",
+            // cấu hình
+          },
+        });
+      }
+    },
+    [session]
+  );
+
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     onDrop,
+    accept: {
+      "audio/*": [], // Chấp nhận tất cả định dạng audio
+    },
   });
   const files = acceptedFiles.map((file: FileWithPath) => (
     <li key={file.path}>
