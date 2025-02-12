@@ -4,10 +4,14 @@ import "./theme.css";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { sendRequest, sendRequestFile } from "@/utils/api";
 import { useSession } from "next-auth/react"; // lấy session ở client
 import axios from "axios";
+interface IProps {
+  setValue: (v: number) => void;
+  setTrackUpload: any;
+}
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -34,16 +38,16 @@ function InputFileUpload() {
     </Button>
   );
 }
-const Step1 = () => {
+const Step1 = (props: IProps) => {
   const { data: session } = useSession();
   // console.log("check session:", session);
-
   //useMemo => variable
   //useCallback=> function khi hàm render nhiều lần mà giá trị không thay đổi thì hàm này giúp render 1 lần
   const onDrop = useCallback(
     async (acceptedFiles: FileWithPath[]) => {
       // Do something with the files
       if (acceptedFiles && acceptedFiles[0]) {
+        props.setValue(1);
         const audio = acceptedFiles[0]; //lấy ra file ,acceptedFiles trả về 1 mảng
         const formData = new FormData();
         formData.append("fileUpload", audio); // key ở backend sẽ dùng vì thế cần check api ,key là fileUpload
@@ -68,8 +72,21 @@ const Step1 = () => {
                 Authorization: `Bearer ${session?.access_token}`,
                 target_type: "tracks",
               },
+              onUploadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                  const percent = Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total
+                  );
+
+                  props.setTrackUpload({
+                    fileName: acceptedFiles[0].name,
+                    percent: percent,
+                  });
+                }
+              },
             }
           );
+
           console.log("check data:", res.data.data.fileName);
         } catch (error) {
           //@ts-ignore

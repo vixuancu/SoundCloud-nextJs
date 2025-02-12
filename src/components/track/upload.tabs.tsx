@@ -29,7 +29,10 @@ function CustomTabPanel(props: TabPanelProps) {
 
 const UploadTabs = () => {
   const [value, setValue] = React.useState(0);
-
+  const [trackUpload, setTrackUpload] = React.useState({
+    fileName: "",
+    percent: 0,
+  });
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -48,10 +51,10 @@ const UploadTabs = () => {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <Step1 />
+        <Step1 setValue={setValue} setTrackUpload={setTrackUpload} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <Step2 />
+        <Step2 trackUpload={trackUpload} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Item Three
