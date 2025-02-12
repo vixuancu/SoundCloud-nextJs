@@ -7,6 +7,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useCallback } from "react";
 import { sendRequest, sendRequestFile } from "@/utils/api";
 import { useSession } from "next-auth/react"; // lấy session ở client
+import axios from "axios";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -48,16 +49,33 @@ const Step1 = () => {
         formData.append("fileUpload", audio); // key ở backend sẽ dùng vì thế cần check api ,key là fileUpload
         console.log("check file:", audio);
 
-        const res = await sendRequestFile<IBackendRes<ITrackTop[]>>({
-          url: "http://localhost:8000/api/v1/files/upload",
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-            target_type: "tracks",
-            // cấu hình
-          },
-        });
+        // const res = await sendRequestFile<IBackendRes<ITrackTop[]>>({
+        //   url: "http://localhost:8000/api/v1/files/upload",
+        //   method: "POST",
+        //   body: formData,
+        //   headers: {
+        //     Authorization: `Bearer ${session?.access_token}`,
+        //     target_type: "tracks",
+        //     // cấu hình
+        //   },
+        // });
+        try {
+          const res = await axios.post(
+            "http://localhost:8000/api/v1/files/upload",
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.access_token}`,
+                target_type: "tracks",
+              },
+            }
+          );
+          console.log("check data:", res.data.data.fileName);
+        } catch (error) {
+          //@ts-ignore
+
+          alert(error?.response?.data.message);
+        }
       }
     },
     [session]
