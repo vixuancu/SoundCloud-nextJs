@@ -11,6 +11,7 @@ import axios from "axios";
 interface IProps {
   setValue: (v: number) => void;
   setTrackUpload: any;
+  trackUpload: any;
 }
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -39,6 +40,7 @@ function InputFileUpload() {
   );
 }
 const Step1 = (props: IProps) => {
+  const { trackUpload } = props;
   const { data: session } = useSession();
   // console.log("check session:", session);
   //useMemo => variable
@@ -52,17 +54,6 @@ const Step1 = (props: IProps) => {
         const formData = new FormData();
         formData.append("fileUpload", audio); // key ở backend sẽ dùng vì thế cần check api ,key là fileUpload
         console.log("check file:", audio);
-
-        // const res = await sendRequestFile<IBackendRes<ITrackTop[]>>({
-        //   url: "http://localhost:8000/api/v1/files/upload",
-        //   method: "POST",
-        //   body: formData,
-        //   headers: {
-        //     Authorization: `Bearer ${session?.access_token}`,
-        //     target_type: "tracks",
-        //     // cấu hình
-        //   },
-        // });
         try {
           const res = await axios.post(
             "http://localhost:8000/api/v1/files/upload",
@@ -78,16 +69,28 @@ const Step1 = (props: IProps) => {
                     (progressEvent.loaded * 100) / progressEvent.total
                   );
 
-                  props.setTrackUpload({
+                  // props.setTrackUpload({
+                  //   ...trackUpload,
+                  //   fileName: acceptedFiles[0].name,
+                  //   percent: percent,
+                  // });
+
+                  //callback để đảm bảo luôn lấy giá trị mới nhất:
+                  props.setTrackUpload((prev: any) => ({
+                    ...prev,
                     fileName: acceptedFiles[0].name,
                     percent: percent,
-                  });
+                  }));
                 }
               },
             }
           );
+          props.setTrackUpload((prevState: any) => ({
+            ...prevState,
+            uploadedTrackName: res.data.data.fileName,
+          }));
 
-          console.log("check data:", res.data.data.fileName);
+          console.log("check track upload step1:", trackUpload);
         } catch (error) {
           //@ts-ignore
 

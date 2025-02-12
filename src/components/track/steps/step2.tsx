@@ -9,11 +9,23 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Grid, MenuItem } from "@mui/material";
 import TextField from "@mui/material/TextField";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { sendRequest } from "@/utils/api";
+
 interface IProps {
   trackUpload: {
     fileName: string;
     percent: number;
+    uploadedTrackName: string;
   };
+}
+interface INewTrack {
+  title: string;
+  description: string;
+  trackUrl: string;
+  imgUrl: string;
+  category: string;
 }
 // Progress
 function LinearProgressWithLabel(
@@ -56,7 +68,37 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-function InputFileUpload() {
+function InputFileUpload(props: any) {
+  const { setInfo, info } = props;
+  const { data: session } = useSession();
+  const handleUpload = async (image: any) => {
+    const formData = new FormData();
+    formData.append("fileUpload", image); // key ở backend sẽ dùng vì thế cần check api ,key là fileUpload
+    // console.log("check file:", image);
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/v1/files/upload",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            target_type: "images",
+          },
+        }
+      );
+      setInfo({
+        ...info,
+        imgUrl: res.data.data.fileName,
+      });
+
+      console.log("check data:", res.data.data.fileName);
+    } catch (error) {
+      //@ts-ignore
+
+      alert(error?.response?.data.message);
+    }
+  };
+
   return (
     <Button
       component="label"
@@ -68,7 +110,13 @@ function InputFileUpload() {
       Upload files
       <VisuallyHiddenInput
         type="file"
-        onChange={(event) => console.log(event.target.files)}
+        onChange={(event) => {
+          // console.log(event.target.files);
+          const file = event.target.files?.[0]; // Lấy file đầu tiên
+          if (file) {
+            handleUpload(file);
+          }
+        }}
         // multiple  khong lấy nhiều file 1 lúc
       />
     </Button>
@@ -76,8 +124,25 @@ function InputFileUpload() {
 }
 
 const Step2 = (props: IProps) => {
+  const { data: session } = useSession();
+  const [info, setInfo] = React.useState<INewTrack>({
+    title: "",
+    description: "",
+    trackUrl: "",
+    imgUrl: "",
+    category: "",
+  });
   const { trackUpload } = props;
-  console.log("check trackUpload:", trackUpload);
+  React.useEffect(() => {
+    if (trackUpload && trackUpload.uploadedTrackName) {
+      // console.log("track uploaded Name:", trackUpload);
+      setInfo({
+        ...info,
+        trackUrl: trackUpload.uploadedTrackName,
+      });
+    }
+  }, [trackUpload]);
+  // console.log("check trackUpload:", trackUpload);
   const Category = [
     {
       value: "CHILL",
@@ -92,9 +157,33 @@ const Step2 = (props: IProps) => {
       label: "PARTY",
     },
   ];
+  console.log("check onchange:", info);
+  const handleSubmitForm = async () => {
+    // console.log("submt info:", info);
+    const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+      // thông tin là promise nên phải await
+      url: "http://localhost:8000/api/v1/tracks",
+      method: "POST",
+      body: {
+        title: info.title,
+        description: info.description,
+        trackUrl: info.trackUrl,
+        imgUrl: info.imgUrl,
+        category: info.category,
+      },
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+    });
+    if (res.data) {
+      alert("create success a new track");
+    } else {
+      alert(res.message);
+    }
+  };
   return (
     <>
-      <div>Uploading {trackUpload.fileName}</div>
+      <div> {trackUpload.uploadedTrackName}</div>
       <LinearWithValueLabel trackUpload={trackUpload} />
       <Grid container spacing={2} mt={5}>
         <Grid
@@ -109,6 +198,7 @@ const Step2 = (props: IProps) => {
             gap: "10px",
           }}
         >
+          {/* img  */}
           <div
             style={{
               border: "1px solid #ccc",
@@ -116,32 +206,60 @@ const Step2 = (props: IProps) => {
               height: "250px",
             }}
           >
-            left
+            <div>
+              {info.imgUrl && (
+                <img
+                  height={250}
+                  width={250}
+                  style={{ objectFit: "cover" }}
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${info.imgUrl}`}
+                  alt=""
+                />
+              )}
+            </div>
           </div>
-          <InputFileUpload />
+          <InputFileUpload setInfo={setInfo} info={info} />
         </Grid>
         <Grid item xs={6} md={8}>
           <TextField
+            value={info?.title}
+            onChange={(e) =>
+              setInfo({
+                ...info,
+                title: e.target.value,
+              })
+            }
             fullWidth
             label="Title"
-            id="fullWidth"
             variant="standard"
             margin="dense"
           />
           <TextField
+            value={info?.description}
+            onChange={(e) =>
+              setInfo({
+                ...info,
+                description: e.target.value,
+              })
+            }
             fullWidth
             label="Description"
-            id="fullWidth"
             variant="standard"
             margin="dense"
           />
           <TextField
             sx={{ mt: 3 }}
-            id="standard-select-currency"
             select
             fullWidth
             label="Category"
             variant="standard"
+            value={info?.category}
+            onChange={(e) =>
+              setInfo({
+                ...info,
+                category: e.target.value,
+              })
+            }
           >
             {Category.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -149,7 +267,11 @@ const Step2 = (props: IProps) => {
               </MenuItem>
             ))}
           </TextField>
-          <Button variant="outlined" sx={{ mt: 5 }}>
+          <Button
+            variant="outlined"
+            sx={{ mt: 5 }}
+            onClick={() => handleSubmitForm()}
+          >
             Save
           </Button>
         </Grid>

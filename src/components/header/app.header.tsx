@@ -213,7 +213,7 @@ export default function AppHeader() {
                 <>
                   <Link href="/playlist">Playlist</Link>
                   <Link href="/like">Like</Link>
-                  <span>Upload</span>
+                  <Link href="/track/upload">Upload</Link>
 
                   {/* avatar */}
 
