@@ -2,6 +2,7 @@ export {};
 // https://bobbyhadz.com/blog/typescript-make-types-global#declare-global-types-in-typescript
 
 declare global {
+  //interface gợi ý data trả về thường từ backend
   interface ITrackTop {
     _id: string;
     title: string;
@@ -22,6 +23,7 @@ declare global {
     createdAt: string;
     updatedAt: string;
   }
+  //interface gợi ý khi gửi request
   interface IRequest {
     url: string;
     method: string;
@@ -31,7 +33,7 @@ declare global {
     headers?: any;
     nextOption?: any;
   }
-
+  //interface hỗ trợ giá trị trả về từ backend
   interface IBackendRes<T> {
     error?: string | string[];
     message: string;
@@ -39,6 +41,7 @@ declare global {
     data?: T;
   }
 
+  //interface hỗ trợ gọi api có phân trang
   interface IModelPaginate<T> {
     meta: {
       current: number;

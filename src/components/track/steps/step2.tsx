@@ -180,6 +180,7 @@ const Step2 = (props: IProps) => {
     });
     if (res.data) {
       toast.success("create success a new track");
+      setValue(0);
     } else {
       toast.error(res.message);
     }
