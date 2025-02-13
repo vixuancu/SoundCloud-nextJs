@@ -12,7 +12,7 @@
 //   return (
 //     <div>
 //       <h1 className="text-2xl font-bold mb-4">SoundCloud Waveform Style</h1>
-//       <WaveSurferPlayer url={audioUrl} />
+//       <WaveSurferPlayer audioUrl={audioUrl} />
 //     </div>
 //   );
 // };
@@ -24,11 +24,16 @@ import "./wave.scss";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import { Tooltip } from "@mui/material";
-interface WaveSurferPlayerProps {
-  url: string;
+import { sendRequest } from "@/utils/api";
+import { useSearchParams } from "next/navigation";
+import { useTrackContext } from "@/lib/track.context.wrapper";
+interface IProps {
+  track: ITrackTop | null;
 }
 
-const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
+const WaveTrack = (props: IProps) => {
+  const { track } = props;
+  const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
   const waveformRef = useRef<HTMLDivElement | null>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
   const hoverRef = useRef<HTMLDivElement | null>(null);
@@ -39,6 +44,14 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
   const [duration, setDuration] = useState<string>("0:00");
   const [currentTime, setCurrentTime] = useState<string>("0:00");
 
+  //lấy id từ param
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const [trackInfo, setTrackInfo] = useState<ITrackTop | null>(null);
+
+  //
+  const fileName = searchParams.get("audio");
+  const audioUrl = `/api?audio=${fileName}`;
   useEffect(() => {
     if (typeof window !== "undefined" && waveformRef.current) {
       /// chạy trên browrer
@@ -71,7 +84,7 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
         height: 100,
       });
       //// Load audio file
-      wavesurferRef.current.load(url);
+      wavesurferRef.current.load(audioUrl);
 
       wavesurferRef.current.on("ready", () => {
         setDuration(formatTime(wavesurferRef.current!.getDuration()));
@@ -103,7 +116,7 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
         container.removeEventListener("mousemove", handleHover);
       };
     }
-  }, [url]);
+  }, [audioUrl]);
 
   const handlePlayPause = () => {
     wavesurferRef.current?.playPause();
@@ -144,6 +157,16 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
     const percent = (moment / hardCodeDuration) * 100;
     return `${percent}%`;
   };
+  useEffect(() => {
+    if (wavesurferRef.current && currentTrack.isPlaying) {
+      wavesurferRef.current.pause();
+    }
+  }, [currentTrack]);
+
+  useEffect(() => {
+    if (track?._id && !currentTrack?._id)
+      setCurrentTrack({ ...track, isPlaying: false });
+  }, [track]);
   return (
     <div style={{ marginTop: 20 }}>
       <div
@@ -169,7 +192,12 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
           <div className="info" style={{ display: "flex" }}>
             <div>
               <div
-                onClick={() => handlePlayPause()}
+                onClick={() => {
+                  handlePlayPause();
+                  if (track && wavesurferRef.current) {
+                    setCurrentTrack({ ...currentTrack, isPlaying: false });
+                  }
+                }}
                 style={{
                   borderRadius: "50%",
                   background: "#f50",
@@ -198,7 +226,8 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
                   color: "white",
                 }}
               >
-                Hỏi Dân IT's song
+                {/* tiêu đề */}
+                {track?.title}
               </div>
               <div
                 style={{
@@ -210,7 +239,7 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
                   color: "white",
                 }}
               >
-                Eric
+                {track?.description}
               </div>
             </div>
           </div>
@@ -265,7 +294,7 @@ const WaveTrack: React.FC<WaveSurferPlayerProps> = ({ url }) => {
                         zIndex: 20,
                         left: calLeft(item.moment),
                       }}
-                      src={`http://localhost:8000/images/chill1.png`}
+                      src={`http://localhost:8000/images/${track?.imgUrl}`}
                     />
                   </Tooltip>
                 );

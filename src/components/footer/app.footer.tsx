@@ -8,10 +8,11 @@ import { useTrackContext } from "@/lib/track.context.wrapper";
 import { useRef } from "react";
 const AppFooter = () => {
   const playerRef = useRef(null);
+  const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
   const hasMounted = useHasMounted(); // #98
   if (!hasMounted) return <></>;
   // console.log("check Backend", process.env.NEXT_PUBLIC_BACKEND_URL);
-  const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
+
   console.log("check track context:", currentTrack);
 
   if (currentTrack.isPlaying) {
@@ -21,6 +22,7 @@ const AppFooter = () => {
     //@ts-ignore
     playerRef?.current?.audio?.current.pause();
   }
+
   return (
     <div style={{ marginTop: 50 }}>
       <AppBar
@@ -64,8 +66,8 @@ const AppFooter = () => {
               minWidth: 100,
             }}
           >
-            <div style={{ color: "#ccc" }}>DucPhuc</div>
-            <div style={{ color: "black" }}>Who am i ?</div>
+            <div style={{ color: "#ccc" }}>{currentTrack.description}</div>
+            <div style={{ color: "black" }}>{currentTrack.title}</div>
           </div>
         </Container>
       </AppBar>
