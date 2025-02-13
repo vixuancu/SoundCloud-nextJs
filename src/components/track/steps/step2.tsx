@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { sendRequest } from "@/utils/api";
+import { useToast } from "@/utils/toast";
 
 interface IProps {
   trackUpload: {
@@ -19,6 +20,7 @@ interface IProps {
     percent: number;
     uploadedTrackName: string;
   };
+  setValue: (v: number) => void;
 }
 interface INewTrack {
   title: string;
@@ -124,6 +126,7 @@ function InputFileUpload(props: any) {
 }
 
 const Step2 = (props: IProps) => {
+  const toast = useToast();
   const { data: session } = useSession();
   const [info, setInfo] = React.useState<INewTrack>({
     title: "",
@@ -132,7 +135,7 @@ const Step2 = (props: IProps) => {
     imgUrl: "",
     category: "",
   });
-  const { trackUpload } = props;
+  const { trackUpload, setValue } = props;
   React.useEffect(() => {
     if (trackUpload && trackUpload.uploadedTrackName) {
       // console.log("track uploaded Name:", trackUpload);
@@ -176,15 +179,15 @@ const Step2 = (props: IProps) => {
       },
     });
     if (res.data) {
-      alert("create success a new track");
+      toast.success("create success a new track");
     } else {
-      alert(res.message);
+      toast.error(res.message);
     }
   };
   return (
     <>
       <div> {trackUpload.uploadedTrackName}</div>
-      <LinearWithValueLabel trackUpload={trackUpload} />
+      <LinearWithValueLabel trackUpload={trackUpload} setValue={setValue} />
       <Grid container spacing={2} mt={5}>
         <Grid
           item

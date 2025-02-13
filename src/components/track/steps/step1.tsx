@@ -8,6 +8,7 @@ import { useCallback, useState } from "react";
 import { sendRequest, sendRequestFile } from "@/utils/api";
 import { useSession } from "next-auth/react"; // lấy session ở client
 import axios from "axios";
+import { useToast } from "@/utils/toast";
 interface IProps {
   setValue: (v: number) => void;
   setTrackUpload: any;
@@ -40,6 +41,7 @@ function InputFileUpload() {
   );
 }
 const Step1 = (props: IProps) => {
+  const toast = useToast();
   const { trackUpload } = props;
   const { data: session } = useSession();
   // console.log("check session:", session);
@@ -94,7 +96,7 @@ const Step1 = (props: IProps) => {
         } catch (error) {
           //@ts-ignore
 
-          alert(error?.response?.data.message);
+          toast.error(error?.response?.data.message);
         }
       }
     },
