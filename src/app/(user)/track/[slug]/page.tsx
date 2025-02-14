@@ -26,7 +26,8 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
       <div>
         <WaveTrack
           track={res?.data ?? null}
-          comment={resComment?.data ?? null}
+          //@ts-ignore
+          comments={resComment?.data.result ?? []}
         />
       </div>
     </Container>

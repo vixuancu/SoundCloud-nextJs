@@ -1,22 +1,3 @@
-// "use client";
-// import { useSearchParams } from "next/navigation";
-// import { useEffect, useRef } from "react";
-// import WaveSurferPlayer from "@/utils/WaveSurferPlayer";
-// import WaveSurfer from "wavesurfer.js";
-// const WaveTrack = () => {
-//   const searchParams = useSearchParams();
-
-//   const fileName = searchParams.get("audio");
-//   const audioUrl = `/api?audio=${fileName}`;
-
-//   return (
-//     <div>
-//       <h1 className="text-2xl font-bold mb-4">SoundCloud Waveform Style</h1>
-//       <WaveSurferPlayer audioUrl={audioUrl} />
-//     </div>
-//   );
-// };
-// export default WaveTrack;
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
@@ -24,19 +5,20 @@ import "./wave.scss";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import { Tooltip } from "@mui/material";
-import { sendRequest } from "@/utils/api";
+import { fetchDefaultImage, sendRequest } from "@/utils/api";
 import { useSearchParams } from "next/navigation";
 import { useTrackContext } from "@/lib/track.context.wrapper";
+import CommentTrack from "./comment.track";
 interface IProps {
   track: ITrackTop | null;
-  comment: ITrackComment | null;
+  comments: ITrackComment[];
 }
 
 const WaveTrack = (props: IProps) => {
-  const { track, comment } = props;
+  const { track, comments } = props;
   //@ts-ignore
-  const arrComments = comment?.result;
-  console.log("check comments:", comment);
+  // const arrComments = comment?.result;
+  console.log("check comments:", comments);
   const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
   const waveformRef = useRef<HTMLDivElement | null>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
@@ -47,7 +29,7 @@ const WaveTrack = (props: IProps) => {
   const [hoverWidth, setHoverWidth] = useState<number>(0);
   const [duration, setDuration] = useState<string>("0:00");
   const [currentTime, setCurrentTime] = useState<string>("0:00");
-
+  const wavesurfer = wavesurferRef.current as WaveSurfer;
   //lấy id từ param
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -134,7 +116,7 @@ const WaveTrack = (props: IProps) => {
   };
 
   const calLeft = (moment: number) => {
-    const hardCodeDuration = 199;
+    const hardCodeDuration = wavesurferRef.current?.getDuration() ?? 0;
     const percent = (moment / hardCodeDuration) * 100;
     return `${percent}%`;
   };
@@ -259,7 +241,7 @@ const WaveTrack = (props: IProps) => {
             ></div>
             {/* comment */}
             <div className="comments" style={{ position: "relative" }}>
-              {arrComments.map((item: ITrackComment) => {
+              {comments.map((item: ITrackComment) => {
                 return (
                   <Tooltip title={item.content} arrow key={`key-${item._id}`}>
                     <img
@@ -276,7 +258,7 @@ const WaveTrack = (props: IProps) => {
                         zIndex: 20,
                         left: calLeft(item.moment),
                       }}
-                      src={`http://localhost:8000/images/${track?.imgUrl}`}
+                      src={fetchDefaultImage(item.user.type)}
                     />
                   </Tooltip>
                 );
@@ -294,22 +276,33 @@ const WaveTrack = (props: IProps) => {
             alignItems: "center",
           }}
         >
-          <div
-            style={{
-              background: "#ccc",
-              width: 250,
-              height: 250,
-            }}
-          ></div>
+          {track?.imgUrl ? (
+            <img
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track?.imgUrl}`}
+              alt=""
+              width={250}
+              height={250}
+              style={{ objectFit: "cover" }}
+            />
+          ) : (
+            <div
+              style={{
+                background: "#ccc",
+                width: 250,
+                height: 250,
+              }}
+            ></div>
+          )}
         </div>
       </div>
 
-      {/* <button
-        onClick={handlePlayPause}
-        className="mt-2 p-2 bg-orange-500 text-white rounded"
-      >
-        {isPlaying ? " Pause" : " Play"}
-      </button> */}
+      <div>
+        <CommentTrack
+          track={track}
+          comments={comments}
+          wavesurfer={wavesurfer}
+        />
+      </div>
     </div>
   );
 };

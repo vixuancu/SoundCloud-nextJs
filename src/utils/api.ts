@@ -80,3 +80,9 @@ export const sendRequestFile = async <T>(props: IRequest) => {
     }
   });
 };
+export const fetchDefaultImage = (type: string) => {
+  // lấy hình ảnh trong thư mục public chỉ cần khai báo tên thư mục bên trong và đường dẫn tới file ảnh
+  if (type === "GITHUB") return "/user/default-github.png";
+  if (type === "GOOGLE") return "/user/default-google.png";
+  return "/user/default-user.png";
+};
