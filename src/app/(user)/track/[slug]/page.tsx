@@ -2,6 +2,33 @@ import WaveTrack from "@/components/track/wave.track";
 import { useSearchParams } from "next/navigation";
 import Container from "@mui/material/Container";
 import { sendRequest } from "@/utils/api";
+
+import type { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined }; // sau dấu ? trong đường link
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  // const slug = (await params).slug
+
+  // fetch data
+  const res = await sendRequest<IBackendRes<ITrackTop>>({
+    url: `http://localhost:8000/api/v1/tracks/${params.slug}`,
+    method: "GET",
+  });
+
+  return {
+    title: res.data?.title,
+    description: res.data?.description,
+  };
+}
+
 // params được truyền vào chính là props
 const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
   //fetchData tại server
