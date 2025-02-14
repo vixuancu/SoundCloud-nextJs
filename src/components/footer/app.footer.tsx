@@ -5,24 +5,27 @@ import { Container } from "@mui/material";
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import { useTrackContext } from "@/lib/track.context.wrapper";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 const AppFooter = () => {
   const playerRef = useRef(null);
   const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
   const hasMounted = useHasMounted(); // #98
-  if (!hasMounted) return <></>;
+
   // console.log("check Backend", process.env.NEXT_PUBLIC_BACKEND_URL);
 
   console.log("check track context:", currentTrack);
 
-  if (currentTrack.isPlaying) {
-    //@ts-ignore
-    playerRef?.current?.audio?.current.play();
-  } else {
-    //@ts-ignore
-    playerRef?.current?.audio?.current.pause();
-  }
-
+  useEffect(() => {
+    if (currentTrack?.isPlaying === false) {
+      //@ts-ignore
+      playerRef?.current?.audio?.current?.pause();
+    }
+    if (currentTrack?.isPlaying === true) {
+      //@ts-ignore
+      playerRef?.current?.audio?.current?.play();
+    }
+  }, [currentTrack]);
+  if (!hasMounted) return <></>;
   return (
     <div style={{ marginTop: 50 }}>
       <AppBar

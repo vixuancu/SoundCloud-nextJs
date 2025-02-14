@@ -29,10 +29,14 @@ import { useSearchParams } from "next/navigation";
 import { useTrackContext } from "@/lib/track.context.wrapper";
 interface IProps {
   track: ITrackTop | null;
+  comment: ITrackComment | null;
 }
 
 const WaveTrack = (props: IProps) => {
-  const { track } = props;
+  const { track, comment } = props;
+  //@ts-ignore
+  const arrComments = comment?.result;
+  console.log("check comments:", comment);
   const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
   const waveformRef = useRef<HTMLDivElement | null>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
@@ -129,29 +133,6 @@ const WaveTrack = (props: IProps) => {
     return `${minutes}:${paddedSeconds}`;
   };
 
-  const arrComments = [
-    {
-      id: 1,
-      avatar: "http://localhost:8000/images/chill1.png",
-      moment: 10,
-      user: "username 1",
-      content: "just a comment1",
-    },
-    {
-      id: 2,
-      avatar: "http://localhost:8000/images/chill1.png",
-      moment: 30,
-      user: "username 2",
-      content: "just a comment3",
-    },
-    {
-      id: 3,
-      avatar: "http://localhost:8000/images/chill1.png",
-      moment: 50,
-      user: "username 3",
-      content: "just a comment3",
-    },
-  ];
   const calLeft = (moment: number) => {
     const hardCodeDuration = 199;
     const percent = (moment / hardCodeDuration) * 100;
@@ -276,16 +257,17 @@ const WaveTrack = (props: IProps) => {
                 backdropFilter: "brightness(0.5)",
               }}
             ></div>
+            {/* comment */}
             <div className="comments" style={{ position: "relative" }}>
-              {arrComments.map((item) => {
+              {arrComments.map((item: ITrackComment) => {
                 return (
-                  <Tooltip title={item.content} arrow key={`key-${item.id}`}>
+                  <Tooltip title={item.content} arrow key={`key-${item._id}`}>
                     <img
                       onPointerMove={(e) => {
                         const hover = hoverRef.current!;
                         hover.style.width = calLeft(item.moment + 3);
                       }}
-                      key={item.id}
+                      key={item._id}
                       style={{
                         height: 20,
                         width: 20,
