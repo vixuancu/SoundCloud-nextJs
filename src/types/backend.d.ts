@@ -45,6 +45,17 @@ declare global {
     createdAt: string;
     updatedAt: string;
   }
+  //liked
+  interface ITrackLike {
+    _id: string;
+    title: string;
+    description: string;
+    category: string;
+    imgUrl: string;
+    trackUrl: string;
+    countLike: number;
+    countPlay: number;
+  }
   //interface gợi ý khi gửi request
   interface IRequest {
     url: string;

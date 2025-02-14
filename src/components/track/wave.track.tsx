@@ -9,6 +9,7 @@ import { fetchDefaultImage, sendRequest } from "@/utils/api";
 import { useSearchParams } from "next/navigation";
 import { useTrackContext } from "@/lib/track.context.wrapper";
 import CommentTrack from "./comment.track";
+import LikeTrack from "./like.track";
 interface IProps {
   track: ITrackTop | null;
   comments: ITrackComment[];
@@ -16,9 +17,7 @@ interface IProps {
 
 const WaveTrack = (props: IProps) => {
   const { track, comments } = props;
-  //@ts-ignore
-  // const arrComments = comment?.result;
-  console.log("check comments:", comments);
+
   const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
   const waveformRef = useRef<HTMLDivElement | null>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
@@ -295,7 +294,13 @@ const WaveTrack = (props: IProps) => {
           )}
         </div>
       </div>
-
+      <div
+        style={{
+          margin: "10px 10px 0 10px",
+        }}
+      >
+        <LikeTrack track={track} />
+      </div>
       <div>
         <CommentTrack
           track={track}

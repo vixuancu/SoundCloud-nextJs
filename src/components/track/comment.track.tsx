@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/navigation";
 import WaveSurfer from "wavesurfer.js";
+import { useHasMounted } from "@/utils/customHook";
 dayjs.extend(relativeTime);
 
 interface IProps {
@@ -16,6 +17,7 @@ interface IProps {
   wavesurfer: WaveSurfer | null;
 }
 const CommentTrack = (props: IProps) => {
+  const hasMounted = useHasMounted();
   const router = useRouter();
   const { data: session } = useSession();
   const [yourComment, setYourComment] = useState<string>("");
@@ -151,7 +153,8 @@ const CommentTrack = (props: IProps) => {
                       </div>
                     </Box>
                     <div style={{ fontSize: "12px", color: "#999" }}>
-                      {dayjs(comment.createdAt).fromNow()}
+                      {hasMounted && dayjs(comment.createdAt).fromNow()}
+                      {/* chỗ này có bug khi chạy trên server có 1 kết quả , khi chạy ở client có 1 kết quả khác => nextjs warning */}
                     </div>
                   </Box>
                 );

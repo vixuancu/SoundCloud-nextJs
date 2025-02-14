@@ -8,8 +8,11 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
   const res = await sendRequest<IBackendRes<ITrackTop>>({
     url: `http://localhost:8000/api/v1/tracks/${params.slug}`,
     method: "GET",
+    nextOption: {
+      cache: "no-store", // không caching cần xem thêm
+    },
   });
-
+  console.log("check track server:", res.data);
   const resComment = await sendRequest<IBackendRes<ITrackComment>>({
     url: `http://localhost:8000/api/v1/tracks/comments`, // dùng queryParams không cần truyền dấu ? trong đường link
     method: "POST",

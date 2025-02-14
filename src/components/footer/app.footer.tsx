@@ -13,7 +13,7 @@ const AppFooter = () => {
 
   // console.log("check Backend", process.env.NEXT_PUBLIC_BACKEND_URL);
 
-  console.log("check track context:", currentTrack);
+  // console.log("check track context:", currentTrack);
 
   useEffect(() => {
     if (currentTrack?.isPlaying === false) {
