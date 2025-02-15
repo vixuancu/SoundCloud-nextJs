@@ -1,4 +1,5 @@
 import queryString from "query-string";
+import slugify from "slugify";
 
 export const sendRequest = async <T>(props: IRequest) => {
   //Cho phép function trả về bất kỳ kiểu dữ liệu nào (T).
@@ -80,9 +81,22 @@ export const sendRequestFile = async <T>(props: IRequest) => {
     }
   });
 };
+// fetchDefaultImage để xử lí avatar ...
 export const fetchDefaultImage = (type: string) => {
   // lấy hình ảnh trong thư mục public chỉ cần khai báo tên thư mục bên trong và đường dẫn tới file ảnh
   if (type === "GITHUB") return "/user/default-github.png";
   if (type === "GOOGLE") return "/user/default-google.png";
   return "/user/default-user.png";
+};
+
+//
+export const convertSlugUrl = (str: string) => {
+  if (str) {
+    return slugify(str, {
+      lower: true,
+      locale: "vi",
+    });
+  } else {
+    return "";
+  }
 };
