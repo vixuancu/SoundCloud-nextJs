@@ -59,7 +59,7 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
     queryParams: {
       current: 1,
       pageSize: 100,
-      trackId: params.slug,
+      trackId: idSlug,
       sort: "-createdAt",
     },
   });

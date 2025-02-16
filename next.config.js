@@ -3,17 +3,17 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   modularizeImports: {
-    '@mui/icons-material': {
-      transform: '@mui/icons-material/{{member}}',
+    "@mui/icons-material": {
+      transform: "@mui/icons-material/{{member}}",
     },
   },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'source.unsplash.com',
-        port: '',
-        pathname: '/random',
+        protocol: "http", // đường link dẫn ảnh từ backend
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/images/**", // nơi hình ảnh xuất phát
       },
     ],
   },

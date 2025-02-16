@@ -9,6 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/navigation";
 import WaveSurfer from "wavesurfer.js";
 import { useHasMounted } from "@/utils/customHook";
+import Image from "next/image";
 dayjs.extend(relativeTime);
 
 interface IProps {
@@ -82,14 +83,13 @@ const CommentTrack = (props: IProps) => {
           <Grid item md={2}>
             {/* img avatar comment */}
             {session ? (
-              <img
+              <Image
                 src={fetchDefaultImage(session.user.type)}
-                alt=""
+                alt="avatar comment"
+                width={150}
+                height={150}
                 style={{
-                  width: "150px",
-                  height: "150px",
                   borderRadius: "50%",
-                  background: "#ccc",
                 }}
               />
             ) : (
@@ -126,13 +126,12 @@ const CommentTrack = (props: IProps) => {
                         alignItems: "center",
                       }}
                     >
-                      <img
+                      <Image
                         src={fetchDefaultImage(comment.user.type)}
-                        alt=""
+                        alt="avatar comment a user"
+                        width={35}
+                        height={35}
                         style={{
-                          width: "35px",
-                          height: "35px",
-                          objectFit: "cover",
                           borderRadius: "50%",
                         }}
                       />

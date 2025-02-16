@@ -8,6 +8,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Link from "next/link";
 import { convertSlugUrl } from "@/utils/api";
+import Image from "next/image";
 interface IProps {
   data: ITrackTop[];
   title: string;
@@ -59,6 +60,32 @@ const MainSlider = (props: IProps) => {
     slidesToScroll: 3, // số lượng cuộn theo
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
   return (
     // Box === div nhưng mà hỗ trợ code thằng sx vì sử dụng thư viện MUI
@@ -89,8 +116,11 @@ const MainSlider = (props: IProps) => {
                   track._id
                 }.html?audio=${track.trackUrl}`}
               >
-                <img
+                <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
+                  alt="image track at home"
+                  width={150}
+                  height={150}
                 />
               </Link>
 

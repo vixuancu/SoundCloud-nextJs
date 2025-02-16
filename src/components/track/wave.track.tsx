@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { useTrackContext } from "@/lib/track.context.wrapper";
 import CommentTrack from "./comment.track";
 import LikeTrack from "./like.track";
+import Image from "next/image";
 interface IProps {
   track: ITrackTop | null;
   comments: ITrackComment[];
@@ -243,21 +244,21 @@ const WaveTrack = (props: IProps) => {
               {comments.map((item: ITrackComment) => {
                 return (
                   <Tooltip title={item.content} arrow key={`key-${item._id}`}>
-                    <img
+                    <Image
                       onPointerMove={(e) => {
                         const hover = hoverRef.current!;
                         hover.style.width = calLeft(item.moment + 3);
                       }}
-                      key={item._id}
+                      src={fetchDefaultImage(item.user.type)}
+                      alt="user comment"
+                      width={20}
+                      height={20}
                       style={{
-                        height: 20,
-                        width: 20,
                         position: "absolute",
                         top: 71,
                         zIndex: 20,
                         left: calLeft(item.moment),
                       }}
-                      src={fetchDefaultImage(item.user.type)}
                     />
                   </Tooltip>
                 );
@@ -276,12 +277,11 @@ const WaveTrack = (props: IProps) => {
           }}
         >
           {track?.imgUrl ? (
-            <img
+            <Image
               src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track?.imgUrl}`}
-              alt=""
+              alt="image wave track"
               width={250}
               height={250}
-              style={{ objectFit: "cover" }}
             />
           ) : (
             <div
