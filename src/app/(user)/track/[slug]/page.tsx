@@ -4,6 +4,7 @@ import Container from "@mui/material/Container";
 import { sendRequest } from "@/utils/api";
 import slugify from "slugify";
 import { convertSlugUrl } from "@/utils/api";
+import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
@@ -63,6 +64,9 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
       sort: "-createdAt",
     },
   });
+  if (!res.data) {
+    notFound();
+  }
 
   return (
     <Container>
