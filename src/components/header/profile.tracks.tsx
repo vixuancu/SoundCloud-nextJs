@@ -95,7 +95,7 @@ const ProfileTracks = (props: IProps) => {
             objectFit: "cover",
             display: "block",
           }}
-          image={`http://localhost:8000/images/${data.imgUrl}`}
+          image={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${data.imgUrl}`}
           //   alt="Live from space album cover"
         />
       </Card>

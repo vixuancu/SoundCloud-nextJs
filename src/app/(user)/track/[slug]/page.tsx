@@ -22,7 +22,7 @@ export async function generateMetadata(
 
   // fetch data
   const res = await sendRequest<IBackendRes<ITrackTop>>({
-    url: `http://localhost:8000/api/v1/tracks/${idSlug}`,
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${idSlug}`,
     method: "GET",
   });
 
@@ -40,6 +40,9 @@ export async function generateMetadata(
   };
 }
 
+export function generateStaticParams() {
+  return [{ id: "1" }, { id: "2" }, { id: "3" }];
+}
 // params được truyền vào chính là props
 const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
   const idSlug = params.slug.split("-")?.pop()?.split(".html")[0] ?? "";
@@ -47,15 +50,16 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
 
   //fetchData tại server
   const res = await sendRequest<IBackendRes<ITrackTop>>({
-    url: `http://localhost:8000/api/v1/tracks/${idSlug}`,
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${idSlug}`,
     method: "GET",
     nextOption: {
-      cache: "no-store", // không caching cần xem thêm
+      // cache: "no-store", // không lưu cache cần xem thêm
+      next: { tags: ["track-by-id"] },
     },
   });
   console.log("check track server:", res.data);
   const resComment = await sendRequest<IBackendRes<ITrackComment>>({
-    url: `http://localhost:8000/api/v1/tracks/comments`, // dùng queryParams không cần truyền dấu ? trong đường link
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/comments`, // dùng queryParams không cần truyền dấu ? trong đường link
     method: "POST",
     queryParams: {
       current: 1,

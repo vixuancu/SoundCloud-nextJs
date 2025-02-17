@@ -11,17 +11,17 @@ export default async function HomePage() {
   console.log("check session server:", session);
   const chills = await sendRequest<IBackendRes<ITrackTop[]>>({
     // thông tin là promise nên phải await
-    url: "http://localhost:8000/api/v1/tracks/top",
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
     method: "POST",
     body: { category: "CHILL", limit: 10 },
   });
   const workouts = await sendRequest<IBackendRes<ITrackTop[]>>({
-    url: "http://localhost:8000/api/v1/tracks/top",
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
     method: "POST",
     body: { category: "WORKOUT", limit: 10 },
   });
   const party = await sendRequest<IBackendRes<ITrackTop[]>>({
-    url: "http://localhost:8000/api/v1/tracks/top",
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
     method: "POST",
     body: { category: "PARTY", limit: 10 },
   });

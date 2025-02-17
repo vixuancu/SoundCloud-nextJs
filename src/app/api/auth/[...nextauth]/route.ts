@@ -29,7 +29,7 @@ export const authOptions: AuthOptions = {
 
         //
         const res = await sendRequest<IBackendRes<JWT>>({
-          url: "http://localhost:8000/api/v1/auth/login",
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/login`,
           method: "POST",
           body: {
             username: credentials?.username,
@@ -60,7 +60,7 @@ export const authOptions: AuthOptions = {
         // dùng debug ở server để biết thuộc tính
         //todo
         const res = await sendRequest<IBackendRes<JWT>>({
-          url: "http://localhost:8000/api/v1/auth/social-media",
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/social-media`,
           method: "POST",
           body: {
             type: account?.provider.toLocaleUpperCase(),

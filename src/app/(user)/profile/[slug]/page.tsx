@@ -7,10 +7,15 @@ const ProfilePage = async ({ params }: { params: { slug: string } }) => {
   const session = await getServerSession(authOptions);
 
   const tracks = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-    url: "http://localhost:8000/api/v1/tracks/users?current=1&pageSize=10",
+    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/users?current=1&pageSize=10`,
     method: "POST",
     body: { id: params.slug },
     headers: { Authorization: `Bearer ${session?.access_token}` },
+    nextOption: {
+      next: {
+        tags: ["track-by-profile"],
+      },
+    },
   });
   const data = tracks?.data?.result ?? []; // bỏ [] ở vế sau thì data có thể bị undefined
 

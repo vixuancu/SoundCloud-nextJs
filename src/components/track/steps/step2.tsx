@@ -80,7 +80,7 @@ function InputFileUpload(props: any) {
     // console.log("check file:", image);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/v1/files/upload",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/files/upload`,
         formData,
         {
           headers: {
@@ -166,7 +166,7 @@ const Step2 = (props: IProps) => {
     // console.log("submt info:", info);
     const res = await sendRequest<IBackendRes<ITrackTop[]>>({
       // thông tin là promise nên phải await
-      url: "http://localhost:8000/api/v1/tracks",
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks`,
       method: "POST",
       body: {
         title: info.title,
@@ -182,6 +182,14 @@ const Step2 = (props: IProps) => {
     if (res.data) {
       toast.success("create success a new track");
       setValue(0);
+      await sendRequest<IBackendRes<any>>({
+        url: `/api/revalidate`,
+        method: "POST",
+        queryParams: {
+          tag: "track-by-profile",
+          secret: "justArandomString",
+        },
+      });
     } else {
       toast.error(res.message);
     }
