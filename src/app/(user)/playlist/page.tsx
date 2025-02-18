@@ -10,6 +10,11 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { sendRequest } from "@/utils/api";
 import CurrentTrack from "./components/current.track";
 import { Fragment } from "react";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Playlist bạn đã tạo",
+  description: "miêu tả thôi mà",
+};
 const PlaylistPage = async () => {
   const session = await getServerSession(authOptions);
   const res = await sendRequest<IBackendRes<IModelPaginate<IPlaylist>>>({
