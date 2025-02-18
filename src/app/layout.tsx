@@ -14,13 +14,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ThemeRegistry>
-          <NProgressProviders>
-            <NextAuthWrapper>
-              <ToastProvider>
-                <TrackContextProvider>{children}</TrackContextProvider>
-              </ToastProvider>
-            </NextAuthWrapper>
-          </NProgressProviders>
+          {/* <NProgressProviders> */}
+          <NextAuthWrapper>
+            <ToastProvider>
+              <TrackContextProvider>{children}</TrackContextProvider>
+            </ToastProvider>
+          </NextAuthWrapper>
+          {/* </NProgressProviders> */}
         </ThemeRegistry>
       </body>
     </html>
