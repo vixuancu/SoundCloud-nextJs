@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { fetchDefaultImage } from "@/utils/api";
 import Image from "next/image";
+import ActiveLink from "./active.link";
 // style component
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -212,21 +213,31 @@ export default function AppHeader() {
             <Box
               sx={{
                 display: { xs: "none", md: "flex" },
-                gap: "20px",
+                // gap: "20px",
                 alignItems: "center",
                 cursor: "pointer",
-                a: { color: "unset", textDecoration: "none" },
+                ">a": {
+                  color: "unset",
+                  textDecoration: "none",
+                  padding: "5px 20px",
+                  "&.active": {
+                    background: "#3b4a59",
+                    color: "#cefaff",
+                    borderRadius: "5px",
+                  },
+                },
               }}
             >
               {session ? (
                 <>
-                  <Link href="/playlist">Playlist</Link>
-                  <Link href="/like">Like</Link>
-                  <Link href="/track/upload">Upload</Link>
+                  <ActiveLink href="/playlist">Playlist</ActiveLink>
+                  <ActiveLink href="/like">Like</ActiveLink>
+                  <ActiveLink href="/track/upload">Upload</ActiveLink>
 
                   {/* avatar */}
 
                   <Image
+                    style={{ marginLeft: "20px" }}
                     onClick={handleProfileMenuOpen}
                     src={fetchDefaultImage(session.user.type)}
                     alt="avatar"
